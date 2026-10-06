@@ -1,0 +1,16 @@
+{
+  "name": "cherry-design-system-test-2",
+  "version": "1.0.0",
+  "scripts": {
+    "preview": "sh build-preview.sh && python3 -m http.server 5199 --directory preview"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "esbuild": "^0.28.2",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}
