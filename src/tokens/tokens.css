@@ -31,6 +31,13 @@
   --color-focus-ring: #0b1f66;
   --color-focus-ring-inner: #ffffff;
 
+  /* Color: card */
+  --color-bg-card-outlined: #ffffff;
+  --color-bg-card-elevated: #ffffff;
+  --color-bg-card-filled: #f0f3fa;
+  --color-border-card-outlined: #c9d0e0;
+  --color-text-card-default: #1b2333;
+
   /* Spacing */
   --space-xs: 0.25rem;
   --space-sm: 0.5rem;
@@ -40,6 +47,7 @@
   /* Radius */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
   --radius-full: 9999px;
 
   /* Size */
@@ -61,6 +69,9 @@
   --font-size-lg: 1.125rem;
   --font-weight-button: 600;
   --line-height-button: 1.25;
+
+  /* Shadow */
+  --shadow-card-elevated: 0 1px 2px rgb(27 35 51 / 0.08), 0 4px 12px rgb(27 35 51 / 0.1);
 
   /* Motion */
   --duration-spinner: 0.8s;

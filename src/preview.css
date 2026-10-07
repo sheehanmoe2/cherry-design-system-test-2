@@ -6,3 +6,8 @@ h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
 .label { width: 80px; font-size: 0.85rem; color: #555; }
 .note { font-size: 0.85rem; color: #555; }
+.demo-card { width: 200px; }
+.demo-card p, .demo-card-wide p { margin: 4px 0 0; }
+.demo-card-wide { width: 100%; max-width: 420px; }
+.demo-card-wide .row { margin: 16px 0 0; }
+.card-title { margin: 0 0 8px; font-size: 1.125rem; }

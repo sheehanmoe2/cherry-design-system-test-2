@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
 import { Button } from './components/Button/Button';
+import { Card } from './components/Card/Card';
 import './preview.css';
 
 const Plus = () => (
@@ -12,6 +13,8 @@ const Arrow = () => (
 
 const variants = ['primary', 'secondary', 'ghost'] as const;
 const sizes = ['sm', 'md', 'lg'] as const;
+const cardVariants = ['outlined', 'elevated', 'filled'] as const;
+const cardPaddings = ['sm', 'md', 'lg'] as const;
 
 function Demo() {
   const [saving, setSaving] = useState(false);
@@ -19,10 +22,42 @@ function Demo() {
   const [submitted, setSubmitted] = useState(false);
   return (
     <main>
-      <h1>Button</h1>
+      <h1>Design system</h1>
       <p className="lead">Tab through the buttons to see the focus ring.</p>
 
-      <h2>Variants × sizes</h2>
+      <h2>Card: variants</h2>
+      <div className="row">
+        {cardVariants.map((v) => (
+          <Card key={v} variant={v} className="demo-card">
+            <strong>{v}</strong>
+            <p>Cards group related content on a surface.</p>
+          </Card>
+        ))}
+      </div>
+
+      <h2>Card: padding</h2>
+      <div className="row">
+        {cardPaddings.map((p) => (
+          <Card key={p} padding={p} className="demo-card">
+            <strong>padding {p}</strong>
+            <p>Spacing comes from the space tokens.</p>
+          </Card>
+        ))}
+      </div>
+
+      <h2>Card: with content, as an article</h2>
+      <div className="row">
+        <Card as="article" variant="elevated" padding="lg" className="demo-card-wide" aria-labelledby="card-demo-title">
+          <h3 id="card-demo-title" className="card-title">Quarterly review</h3>
+          <p>Cards hold any content, such as text, a Button, or media.</p>
+          <div className="row">
+            <Button size="sm">Open</Button>
+            <Button size="sm" variant="ghost">Dismiss</Button>
+          </div>
+        </Card>
+      </div>
+
+      <h2>Button: variants × sizes</h2>
       {variants.map((v) => (
         <div className="row" key={v}>
           <span className="label">{v}</span>
@@ -32,7 +67,7 @@ function Demo() {
         </div>
       ))}
 
-      <h2>Icons</h2>
+      <h2>Button: icons</h2>
       <div className="row">
         <Button leftIcon={<Plus />}>Add item</Button>
         <Button variant="secondary" rightIcon={<Arrow />}>Next</Button>
@@ -41,12 +76,12 @@ function Demo() {
         <Button variant="secondary" size="lg" aria-label="Next" rightIcon={<Arrow />} />
       </div>
 
-      <h2>Disabled</h2>
+      <h2>Button: disabled</h2>
       <div className="row">
         {variants.map((v) => <Button key={v} variant={v} disabled>{v}</Button>)}
       </div>
 
-      <h2>Loading (focusable, clicks blocked)</h2>
+      <h2>Button: loading (focusable, clicks blocked)</h2>
       <div className="row">
         {variants.map((v) => <Button key={v} variant={v} loading onClick={() => setClicks((c) => c + 1)}>Saving…</Button>)}
         <span className="note">clicks that got through: {clicks}</span>
@@ -57,7 +92,7 @@ function Demo() {
         </Button>
       </div>
 
-      <h2>Default type="button"</h2>
+      <h2>Button: default type="button"</h2>
       <form onSubmit={(e) => { e.preventDefault(); setSubmitted(true); }} className="row">
         <Button>Does not submit</Button>
         <Button type="submit" variant="secondary">Submit</Button>

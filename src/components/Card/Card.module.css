@@ -1,0 +1,35 @@
+.card {
+  box-sizing: border-box;
+  display: block;
+  border: var(--border-width-default) solid transparent;
+  border-radius: var(--radius-lg);
+  color: var(--color-text-card-default);
+  font-family: inherit;
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-button);
+}
+
+/* Variants */
+.outlined {
+  background-color: var(--color-bg-card-outlined);
+  border-color: var(--color-border-card-outlined);
+}
+
+.elevated {
+  background-color: var(--color-bg-card-elevated);
+  box-shadow: var(--shadow-card-elevated);
+}
+
+.filled {
+  background-color: var(--color-bg-card-filled);
+}
+
+/* Padding */
+.sm { padding: var(--space-sm); }
+.md { padding: var(--space-md); }
+.lg { padding: var(--space-lg); }
+
+/* Forced colors drops shadows and fills, so give every variant an edge */
+@media (forced-colors: active) {
+  .card { border-color: CanvasText; }
+}
