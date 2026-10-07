@@ -1,12 +1,17 @@
 .card {
   box-sizing: border-box;
   display: block;
+  min-inline-size: 0;
   border: var(--border-width-default) solid transparent;
   border-radius: var(--radius-lg);
   color: var(--color-text-card-default);
-  font-family: inherit;
-  font-size: var(--font-size-md);
-  line-height: var(--line-height-button);
+  line-height: var(--line-height-body);
+  overflow-wrap: anywhere;
+}
+
+/* A card inside a card steps its radius down so the corners stay concentric */
+.card .card {
+  border-radius: calc(var(--radius-lg) - var(--space-sm));
 }
 
 /* Variants */
@@ -17,6 +22,7 @@
 
 .elevated {
   background-color: var(--color-bg-card-elevated);
+  border-color: var(--color-border-card-elevated);
   box-shadow: var(--shadow-card-elevated);
 }
 
@@ -24,12 +30,20 @@
   background-color: var(--color-bg-card-filled);
 }
 
-/* Padding */
-.sm { padding: var(--space-sm); }
+/* Padding (sm also uses a smaller radius so content does not crowd the corners) */
+.sm {
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+}
 .md { padding: var(--space-md); }
 .lg { padding: var(--space-lg); }
 
 /* Forced colors drops shadows and fills, so give every variant an edge */
 @media (forced-colors: active) {
   .card { border-color: CanvasText; }
+}
+
+/* Print drops backgrounds and shadows, so keep an edge there too */
+@media print {
+  .card { border-color: CanvasText; box-shadow: none; }
 }

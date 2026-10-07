@@ -34,9 +34,11 @@
   /* Color: card */
   --color-bg-card-outlined: #ffffff;
   --color-bg-card-elevated: #ffffff;
-  --color-bg-card-filled: #f0f3fa;
-  --color-border-card-outlined: #c9d0e0;
+  --color-bg-card-filled: #dde4f2;
+  --color-border-card-outlined: #8b93a5;
+  --color-border-card-elevated: #dfe3ec;
   --color-text-card-default: #1b2333;
+  --color-bg-surface-default: #ffffff;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -69,11 +71,25 @@
   --font-size-lg: 1.125rem;
   --font-weight-button: 600;
   --line-height-button: 1.25;
+  --line-height-body: 1.5;
 
   /* Shadow */
-  --shadow-card-elevated: 0 1px 2px rgb(27 35 51 / 0.08), 0 4px 12px rgb(27 35 51 / 0.1);
+  --shadow-card-elevated: 0 1px 2px rgb(27 35 51 / 0.12), 0 4px 12px rgb(27 35 51 / 0.14);
 
   /* Motion */
   --duration-spinner: 0.8s;
   --duration-transition: 0.15s;
+}
+
+/* Dark surfaces: opt in with data-theme="dark" on the surface or an ancestor.
+   Elevated gets a lighter fill instead of relying on a shadow. */
+[data-theme='dark'] {
+  --color-bg-surface-default: #121826;
+  --color-bg-card-outlined: #121826;
+  --color-bg-card-elevated: #212a3d;
+  --color-bg-card-filled: #1b2335;
+  --color-border-card-outlined: #6b7794;
+  --color-border-card-elevated: #2f3a52;
+  --color-text-card-default: #e8ecf6;
+  --shadow-card-elevated: 0 1px 2px rgb(0 0 0 / 0.4), 0 4px 12px rgb(0 0 0 / 0.35);
 }

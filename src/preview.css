@@ -11,3 +11,4 @@ h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color
 .demo-card-wide { width: 100%; max-width: 420px; }
 .demo-card-wide .row { margin: 16px 0 0; }
 .card-title { margin: 0 0 8px; font-size: 1.125rem; }
+.dark-surface { display: flex; flex-wrap: wrap; gap: 12px; padding: 20px; margin-bottom: 12px; border-radius: 12px; background: var(--color-bg-surface-default); }

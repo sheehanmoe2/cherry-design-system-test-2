@@ -45,6 +45,28 @@ function Demo() {
         ))}
       </div>
 
+      <h2>Card: edge cases</h2>
+      <div className="row">
+        <Card className="demo-card">
+          <strong>Long content</strong>
+          <p>https://example.com/a/very/long/path/that/would/otherwise/overflow/the/card</p>
+        </Card>
+        <Card variant="filled" padding="lg" className="demo-card">
+          <strong>Nested</strong>
+          <Card variant="outlined" padding="sm">An inner card with a smaller radius.</Card>
+        </Card>
+      </div>
+
+      <h2>Card: dark surface</h2>
+      <div className="dark-surface" data-theme="dark">
+        {cardVariants.map((v) => (
+          <Card key={v} variant={v} className="demo-card">
+            <strong>{v}</strong>
+            <p>Same Card, dark tokens.</p>
+          </Card>
+        ))}
+      </div>
+
       <h2>Card: with content, as an article</h2>
       <div className="row">
         <Card as="article" variant="elevated" padding="lg" className="demo-card-wide" aria-labelledby="card-demo-title">
