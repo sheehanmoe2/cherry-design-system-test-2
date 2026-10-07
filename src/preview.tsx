@@ -21,6 +21,7 @@ type Active =
   | { kind: 'busy'; variant: Variant }
   | { kind: 'long' }
   | { kind: 'stack' }
+  | { kind: 'confirm' }
   | null;
 
 const modalVariants = ['primary', 'secondary', 'tertiary'] as const;
@@ -33,10 +34,11 @@ function ModalDemo() {
   const matrix = active?.kind === 'matrix' ? active : null;
   const busyDemo = active?.kind === 'busy' ? active : null;
   const nameRef = useRef<HTMLInputElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
 
   return (
     <>
-      <h1>Modal</h1>
+      <h2 className="page-title">Modal</h2>
       <p className="lead">Open each one, then try Tab, Shift+Tab, Escape, and clicking the scrim.</p>
 
       <h2>Variants × sizes</h2>
@@ -60,8 +62,9 @@ function ModalDemo() {
         ))}
       </div>
 
-      <h2>Scrolling and stacking</h2>
+      <h2>Scrolling, stacking, confirmation</h2>
       <div className="row">
+        <Button variant="secondary" size="sm" onClick={() => setActive({ kind: 'confirm' })}>Confirm (alertdialog)</Button>
         <Button variant="secondary" size="sm" onClick={() => setActive({ kind: 'long' })}>Long content</Button>
         <Button variant="secondary" size="sm" onClick={() => setActive({ kind: 'stack' })}>Stacked modals</Button>
       </div>
@@ -105,6 +108,23 @@ function ModalDemo() {
           <p>While busy, the close button is disabled and Escape and scrim clicks do nothing.</p>
         </Modal>
       )}
+
+      <Modal
+        open={active?.kind === 'confirm'}
+        onClose={close}
+        role="alertdialog"
+        variant="tertiary"
+        size="sm"
+        title="Discard changes?"
+        description="Your edits will be lost. This cannot be undone."
+        initialFocusRef={cancelRef}
+        footer={
+          <>
+            <Button variant="ghost" ref={cancelRef} onClick={close}>Keep editing</Button>
+            <Button onClick={close}>Discard</Button>
+          </>
+        }
+      />
 
       <Modal
         open={active?.kind === 'long'}

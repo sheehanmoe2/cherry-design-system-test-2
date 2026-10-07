@@ -32,7 +32,7 @@
   --color-focus-ring-inner: #ffffff;
 
   /* Color: modal surfaces (primary: brand-tinted fill, secondary: outlined, tertiary: flat) */
-  --color-bg-modal-primary: #e8efff;
+  --color-bg-modal-primary: #edf2ff;
   --color-bg-modal-secondary: #ffffff;
   --color-bg-modal-tertiary: #ffffff;
   --color-border-modal-primary: #b3c6ff;
@@ -79,6 +79,7 @@
   --font-size-sm: 0.875rem;
   --font-size-md: 1rem;
   --font-size-lg: 1.125rem;
+  --font-size-modal-title: 1.25rem;
   --font-weight-button: 600;
   --line-height-button: 1.25;
   --font-weight-heading: 600;
@@ -93,7 +94,7 @@
   --scale-modal-enter: 0.96;
 
   /* Elevation and stacking */
-  --shadow-modal: 0 1.5rem 3rem rgba(11, 20, 40, 0.28);
+  --shadow-modal: 0 0.75rem 1.5rem rgba(11, 20, 40, 0.24);
   --z-modal: 1000;
   --z-modal-step: 10;
 }

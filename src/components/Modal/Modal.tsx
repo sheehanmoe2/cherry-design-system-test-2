@@ -26,25 +26,51 @@ export interface ModalProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'
   description?: ReactNode;
   /** Pinned below the scrolling body, typically action Buttons. */
   footer?: ReactNode;
+  /** Use `alertdialog` for confirmations that need an explicit answer; it also defaults `closeOnOverlayClick` to false. */
+  role?: 'dialog' | 'alertdialog';
   /** Surface treatment: brand-tinted fill, outlined, or flat. */
   variant?: 'primary' | 'secondary' | 'tertiary';
   size?: 'sm' | 'md' | 'lg';
+  /** Defaults to true for `dialog` and false for `alertdialog`. */
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
   showCloseButton?: boolean;
   /** Disables the close button, Escape, and overlay dismissal while work is pending. */
   busy?: boolean;
+  /** Announced to screen readers while `busy`. */
+  busyLabel?: string;
   closeLabel?: string;
-  /** Element to focus on open. Defaults to the first focusable element, else the dialog. */
+  /** Element to focus on open. Defaults to the first focusable element in the body, else the dialog itself. */
   initialFocusRef?: RefObject<HTMLElement | null>;
 }
 
 const FOCUSABLE =
-  'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),summary,audio[controls],video[controls],[contenteditable]:not([contenteditable="false"]),[tabindex]:not([tabindex="-1"])';
 
-// Open modals, topmost last. Drives Escape handling, stacking order, and the shared scroll lock.
-const stack: symbol[] = [];
+// Open modals, topmost last. Drives Escape handling, stacking order, the shared scroll lock, and inerting.
+interface Entry {
+  token: symbol;
+  overlay: HTMLElement | null;
+}
+const stack: Entry[] = [];
 let restoreScroll: (() => void) | null = null;
+const inerted = new Set<HTMLElement>();
+
+// Everything on the body except the topmost overlay is inert, so aria-modal is honored by every screen reader.
+function syncInert() {
+  const top = stack[stack.length - 1]?.overlay ?? null;
+  for (const el of Array.from(document.body.children)) {
+    if (!(el instanceof HTMLElement)) continue;
+    const shouldBeInert = stack.length > 0 && el !== top;
+    if (shouldBeInert && !el.inert) {
+      el.inert = true;
+      inerted.add(el);
+    } else if (!shouldBeInert && inerted.has(el)) {
+      el.inert = false;
+      inerted.delete(el);
+    }
+  }
+}
 
 function lockScroll() {
   if (stack.length !== 1) return;
@@ -79,12 +105,14 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
     title,
     description,
     footer,
+    role = 'dialog',
     variant = 'primary',
     size = 'md',
-    closeOnOverlayClick = true,
+    closeOnOverlayClick = role !== 'alertdialog',
     closeOnEscape = true,
     showCloseButton = true,
     busy = false,
+    busyLabel = 'Please wait',
     closeLabel = 'Close',
     initialFocusRef,
     className,
@@ -126,17 +154,20 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
     const token = key.current;
     const previouslyFocused = document.activeElement as HTMLElement | null;
     setLevel(stack.length);
-    stack.push(token);
+    stack.push({ token, overlay: overlayRef.current });
     lockScroll();
+    syncInert();
 
+    // With no field in the body, focus the dialog itself so the title and description are read before any control.
     const panel = panelRef.current;
     const target =
-      initialFocusRef?.current ?? panel?.querySelector<HTMLElement>(FOCUSABLE) ?? panel;
+      initialFocusRef?.current ?? panel?.querySelector<HTMLElement>(`.${styles.body} :is(${FOCUSABLE})`) ?? panel;
     target?.focus();
 
     return () => {
-      stack.splice(stack.indexOf(token), 1);
+      stack.splice(stack.findIndex((entry) => entry.token === token), 1);
       unlockScroll();
+      syncInert();
       // Deferred: React re-focuses the pre-commit element after this commit, which would undo an immediate restore.
       // Skip it if the user has already moved focus somewhere outside the dialog.
       window.setTimeout(() => {
@@ -158,7 +189,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
 
   if (!mounted || typeof document === 'undefined') return null;
 
-  const isTop = () => stack[stack.length - 1] === key.current;
+  const isTop = () => stack[stack.length - 1]?.token === key.current;
 
   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     // React events bubble through portals, so ignore keys meant for a modal stacked above this one.
@@ -207,6 +238,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
 
   const hasTitle = Boolean(title);
   const hasHeader = hasTitle || showCloseButton;
+  const hasBody = (children != null && children !== false) || (!hasHeader && Boolean(description));
 
   return createPortal(
     <div
@@ -222,7 +254,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
       <div
         {...rest}
         ref={setPanelRef}
-        role="dialog"
+        role={role}
         aria-modal="true"
         aria-labelledby={hasTitle ? titleId : rest['aria-labelledby']}
         aria-describedby={description ? descriptionId : rest['aria-describedby']}
@@ -251,21 +283,26 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(function Modal(
                 aria-label={closeLabel}
                 className={styles.close}
                 leftIcon={<CloseIcon />}
-                disabled={busy}
-                onClick={onClose}
+                aria-disabled={busy || undefined}
+                onClick={busy ? undefined : onClose}
               />
             )}
           </header>
         )}
-        <div className={styles.body}>
-          {!hasHeader && description && (
-            <p id={descriptionId} className={styles.description}>
-              {description}
-            </p>
-          )}
-          {children}
-        </div>
+        {hasBody && (
+          <div className={styles.body}>
+            {!hasHeader && description && (
+              <p id={descriptionId} className={styles.description}>
+                {description}
+              </p>
+            )}
+            {children}
+          </div>
+        )}
         {footer && <footer className={styles.footer}>{footer}</footer>}
+        <span role="status" className={styles.srOnly}>
+          {busy ? busyLabel : ''}
+        </span>
       </div>
     </div>,
     document.body,
