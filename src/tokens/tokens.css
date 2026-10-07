@@ -11,6 +11,7 @@
   --color-bg-secondary-hover: #f0f3fa;
   --color-bg-secondary-pressed: #e1e7f5;
   --color-text-on-secondary: #1f5eff;
+  --color-text-on-secondary-pressed: #1641b0;
   --color-border-secondary-default: #1f5eff;
 
   /* Color: ghost */
@@ -18,15 +19,17 @@
   --color-bg-ghost-hover: #f0f3fa;
   --color-bg-ghost-pressed: #e1e7f5;
   --color-text-on-ghost: #1f5eff;
+  --color-text-on-ghost-pressed: #1641b0;
   --color-border-ghost-default: transparent;
 
   /* Color: disabled */
   --color-bg-disabled: #e6e8ee;
-  --color-text-disabled: #6b7280;
-  --color-border-disabled: #e6e8ee;
+  --color-text-disabled: #565d6b;
+  --color-border-disabled: #8b93a5;
 
   /* Color: focus */
   --color-focus-ring: #0b1f66;
+  --color-focus-ring-inner: #ffffff;
 
   /* Spacing */
   --space-xs: 0.25rem;
