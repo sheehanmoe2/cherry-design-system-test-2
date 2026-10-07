@@ -1,0 +1,107 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) + var(--modal-level, 0) * var(--z-modal-step));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  background-color: var(--color-overlay-scrim);
+}
+.overlay[data-state='open'] { animation: fade-in var(--duration-modal) var(--easing-modal) both; }
+.overlay[data-state='closed'] { animation: fade-out var(--duration-modal) var(--easing-modal) both; }
+
+.panel {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 100%;
+  border: var(--border-width-default) solid transparent;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  color: var(--color-text-modal-body);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-body);
+}
+.panel:focus { outline: none; }
+.panel[data-state='open'] { animation: scale-in var(--duration-modal) var(--easing-modal) both; }
+.panel[data-state='closed'] { animation: scale-out var(--duration-modal) var(--easing-modal) both; }
+
+/* Variants: surface treatment only */
+.primary {
+  background-color: var(--color-bg-modal-primary);
+  border-color: var(--color-border-modal-primary);
+}
+.secondary {
+  background-color: var(--color-bg-modal-secondary);
+  border-color: var(--color-border-modal-secondary);
+}
+.tertiary {
+  background-color: var(--color-bg-modal-tertiary);
+  border-color: var(--color-border-modal-tertiary);
+}
+
+/* Sizes */
+.sm { max-width: var(--size-modal-sm); }
+.md { max-width: var(--size-modal-md); }
+.lg { max-width: var(--size-modal-lg); }
+
+/* Header and footer stay pinned; only the body scrolls */
+.header {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: var(--border-width-default) solid var(--color-border-modal-divider);
+}
+.headings { flex: 1; min-width: 0; align-self: center; }
+.title {
+  margin: 0;
+  color: var(--color-text-modal-title);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-heading);
+  line-height: var(--line-height-heading);
+  letter-spacing: normal;
+  text-transform: none;
+}
+.description { margin: var(--space-xs) 0 0; font-size: var(--font-size-sm); }
+.body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--space-lg);
+}
+.body > .description { margin: 0 0 var(--space-md); }
+.footer {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-top: var(--border-width-default) solid var(--color-border-modal-divider);
+}
+
+/* Close control: the ghost Button supplies default, focus-visible and disabled states.
+   On the tinted surface its stock hover tint would blend in, so it gets its own. */
+.close { flex: none; }
+.primary .close:hover:not(:disabled) { background-color: var(--color-bg-modal-close-primary-hover); }
+.primary .close:active:not(:disabled) { background-color: var(--color-bg-modal-close-primary-pressed); }
+
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-out { to { opacity: 0; } }
+@keyframes scale-in { from { transform: scale(var(--scale-modal-enter)); } }
+@keyframes scale-out { to { transform: scale(var(--scale-modal-enter)); } }
+
+/* Reduced motion: keep the opacity fade on the overlay, drop the scale */
+@media (prefers-reduced-motion: reduce) {
+  .panel[data-state='open'],
+  .panel[data-state='closed'] { animation: none; }
+}
+
+@media (forced-colors: active) {
+  .panel { border-color: CanvasText; }
+}

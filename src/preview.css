@@ -6,3 +6,6 @@ h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color
 .row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
 .label { width: 80px; font-size: 0.85rem; color: #555; }
 .note { font-size: 0.85rem; color: #555; }
+label { display: grid; gap: 4px; font-size: 0.9rem; }
+input { font: inherit; padding: 8px; }
+hr { margin: 48px 0 24px; border: 0; border-top: 1px solid #ccc; }

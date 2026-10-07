@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Button } from './components/Button/Button';
+import { Modal, type ModalProps } from './components/Modal/Modal';
 import './preview.css';
 
 const Plus = () => (
@@ -12,6 +13,132 @@ const Arrow = () => (
 
 const variants = ['primary', 'secondary', 'ghost'] as const;
 const sizes = ['sm', 'md', 'lg'] as const;
+
+type Variant = NonNullable<ModalProps['variant']>;
+type Size = NonNullable<ModalProps['size']>;
+type Active =
+  | { kind: 'matrix'; variant: Variant; size: Size }
+  | { kind: 'busy'; variant: Variant }
+  | { kind: 'long' }
+  | { kind: 'stack' }
+  | null;
+
+const modalVariants = ['primary', 'secondary', 'tertiary'] as const;
+
+function ModalDemo() {
+  const [active, setActive] = useState<Active>(null);
+  const [stacked, setStacked] = useState(false);
+  const [busy, setBusy] = useState(true);
+  const close = () => { setActive(null); setStacked(false); setBusy(true); };
+  const matrix = active?.kind === 'matrix' ? active : null;
+  const busyDemo = active?.kind === 'busy' ? active : null;
+  const nameRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <>
+      <h1>Modal</h1>
+      <p className="lead">Open each one, then try Tab, Shift+Tab, Escape, and clicking the scrim.</p>
+
+      <h2>Variants × sizes</h2>
+      {modalVariants.map((v) => (
+        <div className="row" key={v}>
+          <span className="label">{v}</span>
+          {sizes.map((s) => (
+            <Button key={s} variant="secondary" size="sm" onClick={() => setActive({ kind: 'matrix', variant: v, size: s })}>
+              {s} modal
+            </Button>
+          ))}
+        </div>
+      ))}
+
+      <h2>Busy (close, Escape and scrim disabled)</h2>
+      <div className="row">
+        {modalVariants.map((v) => (
+          <Button key={v} variant="secondary" size="sm" onClick={() => { setBusy(true); setActive({ kind: 'busy', variant: v }); }}>
+            {v} busy
+          </Button>
+        ))}
+      </div>
+
+      <h2>Scrolling and stacking</h2>
+      <div className="row">
+        <Button variant="secondary" size="sm" onClick={() => setActive({ kind: 'long' })}>Long content</Button>
+        <Button variant="secondary" size="sm" onClick={() => setActive({ kind: 'stack' })}>Stacked modals</Button>
+      </div>
+
+      {matrix && (
+        <Modal
+          open
+          onClose={close}
+          variant={matrix.variant}
+          size={matrix.size}
+          title={`${matrix.variant} · ${matrix.size}`}
+          description="Composable: anything goes in the body."
+          initialFocusRef={nameRef}
+          footer={
+            <>
+              <Button variant="ghost" onClick={close}>Cancel</Button>
+              <Button onClick={close}>Save</Button>
+            </>
+          }
+        >
+          <label>
+            Name <input ref={nameRef} defaultValue="Focus starts here" />
+          </label>
+        </Modal>
+      )}
+
+      {busyDemo && (
+        <Modal
+          open
+          onClose={close}
+          variant={busyDemo.variant}
+          busy={busy}
+          title={`${busyDemo.variant} · ${busy ? 'busy' : 'idle'}`}
+          footer={
+            <>
+              <Button variant="secondary" onClick={() => setBusy((b) => !b)}>{busy ? 'Finish work' : 'Start work'}</Button>
+              <Button loading={busy} onClick={close}>{busy ? 'Saving…' : 'Done'}</Button>
+            </>
+          }
+        >
+          <p>While busy, the close button is disabled and Escape and scrim clicks do nothing.</p>
+        </Modal>
+      )}
+
+      <Modal
+        open={active?.kind === 'long'}
+        onClose={close}
+        title="Long content"
+        footer={<Button onClick={close}>Got it</Button>}
+      >
+        {Array.from({ length: 14 }, (_, i) => (
+          <p key={i}>Paragraph {i + 1}. The header and footer stay pinned while only this body scrolls.</p>
+        ))}
+      </Modal>
+
+      <Modal
+        open={active?.kind === 'stack'}
+        onClose={close}
+        variant="secondary"
+        title="First modal"
+        footer={<Button onClick={() => setStacked(true)}>Open second modal</Button>}
+      >
+        <p>Escape closes only the topmost modal. Focus returns to the previous one.</p>
+      </Modal>
+      <Modal
+        open={active?.kind === 'stack' && stacked}
+        onClose={() => setStacked(false)}
+        variant="tertiary"
+        size="sm"
+        title="Second modal"
+        footer={<Button onClick={() => setStacked(false)}>Close this one</Button>}
+      >
+        <p>Stacked above the first.</p>
+      </Modal>
+    </>
+  );
+}
 
 function Demo() {
   const [saving, setSaving] = useState(false);
@@ -63,6 +190,9 @@ function Demo() {
         <Button type="submit" variant="secondary">Submit</Button>
         <span className="note">{submitted ? 'form submitted by Submit' : 'not submitted'}</span>
       </form>
+
+      <hr />
+      <ModalDemo />
     </main>
   );
 }
