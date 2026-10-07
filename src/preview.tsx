@@ -1,6 +1,7 @@
 import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
 import { Button } from './components/Button/Button';
+import { Modal } from './components/Modal/Modal';
 import './preview.css';
 
 const Plus = () => (
@@ -12,6 +13,41 @@ const Arrow = () => (
 
 const variants = ['primary', 'secondary', 'ghost'] as const;
 const sizes = ['sm', 'md', 'lg'] as const;
+
+function ModalDemo() {
+  const [open, setOpen] = useState<null | 'sm' | 'md' | 'lg' | 'confirm' | 'long'>(null);
+  const [result, setResult] = useState('none yet');
+  const close = () => setOpen(null);
+  return (
+    <>
+      <h2>Modal</h2>
+      <div className="row">
+        {(['sm', 'md', 'lg'] as const).map((s) => (
+          <Button key={s} variant="secondary" onClick={() => setOpen(s)}>Open {s}</Button>
+        ))}
+        <Button variant="ghost" onClick={() => setOpen('confirm')}>Confirm dialog</Button>
+        <Button variant="ghost" onClick={() => setOpen('long')}>Long content</Button>
+        <span className="note">last action: {result}</span>
+      </div>
+      {(['sm', 'md', 'lg'] as const).map((s) => (
+        <Modal key={s} open={open === s} onClose={close} size={s} title={`Modal (${s})`}
+          footer={<Button onClick={close}>Done</Button>}>
+          <p style={{ margin: 0 }}>Any content can go here. Press Escape, click the backdrop, or use the close button.</p>
+        </Modal>
+      ))}
+      <Modal open={open === 'confirm'} onClose={() => { setResult('cancelled'); close(); }} size="sm" title="Save changes?"
+        footer={<>
+          <Button variant="ghost" onClick={() => { setResult('cancelled'); close(); }}>Cancel</Button>
+          <Button onClick={() => { setResult('saved'); close(); }}>Save</Button>
+        </>}>
+        <p style={{ margin: 0 }}>Your changes will be applied to this project.</p>
+      </Modal>
+      <Modal open={open === 'long'} onClose={close} title="Scrolling body" footer={<Button onClick={close}>Close</Button>}>
+        {Array.from({ length: 20 }, (_, i) => <p key={i}>Paragraph {i + 1}. The body scrolls while the header and footer stay put.</p>)}
+      </Modal>
+    </>
+  );
+}
 
 function Demo() {
   const [saving, setSaving] = useState(false);
@@ -63,6 +99,7 @@ function Demo() {
         <Button type="submit" variant="secondary">Submit</Button>
         <span className="note">{submitted ? 'form submitted by Submit' : 'not submitted'}</span>
       </form>
+      <ModalDemo />
     </main>
   );
 }
